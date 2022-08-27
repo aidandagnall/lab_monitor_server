@@ -5,7 +5,7 @@ import org.litote.kmongo.newId
 
 data class Lab(
     val _id: Id<Lab> = newId(),
-    val moduleId: Id<Module>,
+    val moduleId: Id<com.aidandagnall.models.Module>,
     var module: Module? = null,
     val day: Int,
     val startTime: String,

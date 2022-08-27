@@ -3,6 +3,7 @@ package com.aidandagnall.routes
 import com.aidandagnall.Constants
 import com.aidandagnall.models.Report
 import com.aidandagnall.models.ReportDTO
+import com.aidandagnall.models.ReportDTOWrapper
 import com.aidandagnall.models.Room
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -20,6 +21,7 @@ fun Route.reportRouting() {
     val reportCollection = db.getCollection<Report>()
     route("/report") {
         post {
+            println("Got report")
             val reportInfo: ReportDTO = call.receive()
             val room = roomCollection.findOne(Room::name eq reportInfo.room)
             if (room == null) {
@@ -30,6 +32,7 @@ fun Route.reportRouting() {
                 call.respond(HttpStatusCode.BadRequest)
             }
             reportCollection.insertOne(Report(ZonedDateTime.now(ZoneId.of("Europe/London")).toInstant(), room!!._id, reportInfo.popularity, reportInfo.removalChance))
+            call.respond(HttpStatusCode.Created)
         }
     }
 }

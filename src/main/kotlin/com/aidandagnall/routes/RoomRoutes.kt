@@ -22,32 +22,37 @@ fun Route.roomRouting() {
     val collection = db.getCollection<Room>()
     val reportCollection = db.getCollection<Report>()
     val labCollection = db.getCollection<Lab>()
+    val moduleCollection = db.getCollection<com.aidandagnall.models.Module>()
     route("/room") {
         get {
             println(ZonedDateTime.now(ZoneId.of("Europe/London")).minusHours(1).toInstant().toString())
             println(Instant.now().minus(1, ChronoUnit.HOURS).toString())
-//            var recentReports = reportCollection.find("{\"\$date\" : { \$gte: new Date(ISODate().getTime() - 1000 * 60 * 60)}}")
-//            val recentReports = reportCollection.find(
-//                Report::time gte Date.from(Instant.now().minus(1, ChronoUnit.HOURS))
-//            ).toList()
             val recentReports = reportCollection.find(
                 Report::time gte
                         Instant.now().minus(1, ChronoUnit.HOURS)
-//                        ZonedDateTime.now(ZoneId.of("Europe/London")).minusHours(1).toInstant()
             ).toList()
-            println(recentReports)
+
             val now = ZonedDateTime.now(ZoneId.of("Europe/London"))
             val currentHourMinute = "${now.hour.toString().padStart(2, '0')}${now.minute.toString().padStart(2, '0')}"
-            val currentLabs = labCollection.find(
-                Lab::startTime lte currentHourMinute,
-                Lab::endTime gt currentHourMinute,
+            val todaysLabs = labCollection.find(
                 Lab::day eq now.dayOfWeek.value
             ).toList()
+//            val currentLabs = labCollection.find(
+//                Lab::startTime lte currentHourMinute,
+//                Lab::endTime gt currentHourMinute,
+//                Lab::day eq now.dayOfWeek.value
+//            ).toList()
             val rooms = collection.find().toList().map { room ->
                 room.apply {
-                    val labs = currentLabs.filter { it.roomIds.contains(this._id) }
-                    if (labs.isNotEmpty()) {
-                        removalChance = labs.maxByOrNull { it.removalChance }?.removalChance
+                    val currentLabs = todaysLabs.filter { it.roomIds.contains(this._id) }.filter { it.startTime <= currentHourMinute && currentHourMinute < it.endTime }
+                    if (currentLabs.isNotEmpty()) {
+                        removalChance = currentLabs.maxByOrNull { it.removalChance }?.removalChance
+                        currentLab = currentLabs.firstOrNull()
+                        nextLab = todaysLabs.filter { it.roomIds.contains(this._id) }.filter { it.startTime <= currentHourMinute }
+                            .minByOrNull { it.startTime }
+                        currentLab = currentLabs.first().apply {
+                            module = moduleCollection.findOneById(moduleId)
+                        };
                     }
                     val reports = recentReports.filter { it.room == this._id }
                     println(reports)

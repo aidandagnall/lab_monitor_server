@@ -7,8 +7,10 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.bson.conversions.Bson
 import org.litote.kmongo.*
+import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 fun Route.labRouting() {
@@ -62,7 +64,8 @@ fun getLabs(getReportInfo: Boolean, vararg filters: Bson?): List<Lab> {
                 }
                 if (!getReportInfo) return@apply
                 val recentReports = reportCollection.find(
-                        Report::time lte Date.from(ZonedDateTime.now(ZoneId.of("Europe/London")).minusHours(1).toInstant())
+                        Report::time lte Instant.now().minus(1, ChronoUnit.HOURS)
+
                     ).toList()
                     .filter { roomIds.contains(it.room) }
                 if (recentReports.isNotEmpty()) {
