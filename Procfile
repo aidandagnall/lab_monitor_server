@@ -1,0 +1,1 @@
+web: ./build/install/lab-monitor/bin/lab-monitor

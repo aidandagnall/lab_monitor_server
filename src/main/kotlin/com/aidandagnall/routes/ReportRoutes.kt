@@ -21,7 +21,6 @@ fun Route.reportRouting() {
     val reportCollection = db.getCollection<Report>()
     route("/report") {
         post {
-            println("Got report")
             val reportInfo: ReportDTO = call.receive()
             val room = roomCollection.findOne(Room::name eq reportInfo.room)
             if (room == null) {

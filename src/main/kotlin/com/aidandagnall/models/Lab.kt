@@ -14,3 +14,12 @@ data class Lab(
     val roomIds: List<Id<Room>>,
     var rooms: List<Room> = listOf(),
 )
+
+data class LabDTO(
+    val moduleCode: String,
+    val day: Int,
+    val startTime: String,
+    val endTime: String,
+    val removalChance: RemovalChance,
+    val rooms: List<String>,
+)

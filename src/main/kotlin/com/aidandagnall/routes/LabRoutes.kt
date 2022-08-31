@@ -2,7 +2,10 @@ package com.aidandagnall.routes
 
 import com.aidandagnall.Constants
 import com.aidandagnall.models.*
+import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.plugins.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.bson.conversions.Bson
@@ -11,7 +14,6 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
-import java.util.*
 
 fun Route.labRouting() {
 
@@ -44,7 +46,36 @@ fun Route.labRouting() {
 
             call.respond(labs)
         }
+        post {
+            if (call.request.headers["key"] == Constants.API_KEY) {
+                postLab(call.receive())
+            } else {
+                call.respond(HttpStatusCode.Unauthorized)
+            }
+        }
     }
+}
+
+fun postLab(labDto: LabDTO) {
+    val db = KMongo.createClient(Constants.CONNECTION_STRING).getDatabase("labs")
+    val labCollection = db.getCollection<Lab>()
+    val roomCollection = db.getCollection<Room>()
+    val moduleCollection = db.getCollection<Module>()
+    val existingLab = labCollection.findOne {
+        Lab::day eq labDto.day
+        Lab::startTime eq labDto.startTime
+        Lab::endTime eq labDto.endTime
+        Lab::moduleId eq moduleCollection.findOne { Module::code eq labDto.moduleCode }?._id
+    }
+    val lab: Lab = Lab(
+        startTime = labDto.startTime,
+        endTime = labDto.endTime,
+        day = labDto.day,
+        moduleId = moduleCollection.findOne { Module::code eq labDto.moduleCode }?._id ?: throw NotFoundException(),
+        removalChance = labDto.removalChance,
+        roomIds = labDto.rooms.map { roomCollection.findOne { Room::name eq it } }.map { it!!._id }.toList()
+    )
+    labCollection.insertOne(lab)
 }
 
 fun getLabs(getReportInfo: Boolean, vararg filters: Bson?): List<Lab> {
