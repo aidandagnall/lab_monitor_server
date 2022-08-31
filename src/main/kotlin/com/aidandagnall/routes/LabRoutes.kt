@@ -75,7 +75,10 @@ fun postLab(labDto: LabDTO) {
         removalChance = labDto.removalChance,
         roomIds = labDto.rooms.map { roomCollection.findOne { Room::name eq it } }.map { it!!._id }.toList()
     )
-    labCollection.insertOne(lab)
+    if (existingLab == null)
+        labCollection.insertOne(lab)
+    else
+        labCollection.updateOneById(existingLab._id, lab)
 }
 
 fun getLabs(getReportInfo: Boolean, vararg filters: Bson?): List<Lab> {

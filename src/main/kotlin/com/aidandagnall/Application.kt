@@ -8,10 +8,10 @@ import com.fasterxml.jackson.module.kotlin.kotlinModule
 import io.github.cdimascio.dotenv.dotenv
 
 fun main() {
-    val mapper = jsonMapper {
+    jsonMapper {
         addModule(kotlinModule())
     }
-    embeddedServer(Netty, port = dotenv()["PORT"].toInt()) {
+    embeddedServer(Netty, port = 8080) {
         configureRouting()
         configureSerialization()
     }.start(wait = true)

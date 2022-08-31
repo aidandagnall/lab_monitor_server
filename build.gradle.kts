@@ -26,6 +26,7 @@ repositories {
     mavenCentral()
 }
 
+
 dependencies {
     implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
@@ -38,3 +39,15 @@ dependencies {
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }
+
+buildscript {
+    repositories {
+        maven {
+            url = uri("https://plugins.gradle.org/m2/")
+        }
+    }
+    dependencies {
+        classpath("io.ktor.plugin:plugin:2.1.0")
+    }
+}
+apply(plugin = "io.ktor.plugin")
