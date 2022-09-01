@@ -21,6 +21,9 @@ fun Route.reportRouting() {
     val reportCollection = db.getCollection<Report>()
     route("/report") {
         post {
+            call.response.headers.append(HttpHeaders.AccessControlAllowOrigin, "https://lab-monitor.herokuapp.com")
+            call.response.headers.append(HttpHeaders.AccessControlAllowHeaders, "x-requested-with")
+            call.response.headers.append(HttpHeaders.Vary, "Origin")
             val reportInfo: ReportDTO = call.receive()
             val room = roomCollection.findOne(Room::name eq reportInfo.room)
             if (room == null) {
@@ -32,8 +35,6 @@ fun Route.reportRouting() {
             }
             reportCollection.insertOne(Report(ZonedDateTime.now(ZoneId.of("Europe/London")).toInstant(), room!!._id, reportInfo.popularity, reportInfo.removalChance))
 
-            call.response.headers.append(HttpHeaders.AccessControlAllowOrigin, "https://lab-monitor.herokuapp.com")
-            call.response.headers.append(HttpHeaders.Vary, "Origin")
             call.respond(HttpStatusCode.Created)
         }
     }
