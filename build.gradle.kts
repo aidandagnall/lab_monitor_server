@@ -36,6 +36,7 @@ dependencies {
     implementation("org.litote.kmongo:kmongo-id:4.7.0")
     implementation("io.github.cdimascio:dotenv-kotlin:6.3.1")
     implementation("io.ktor:ktor-serialization-jackson:$ktor_version")
+    implementation("io.ktor:ktor-server-cors:$ktor_version")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }

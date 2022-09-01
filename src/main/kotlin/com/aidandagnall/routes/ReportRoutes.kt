@@ -20,10 +20,13 @@ fun Route.reportRouting() {
     val roomCollection = db.getCollection<Room>()
     val reportCollection = db.getCollection<Report>()
     route("/report") {
+        options {
+
+        }
         post {
-            call.response.headers.append(HttpHeaders.AccessControlAllowOrigin, "https://lab-monitor.herokuapp.com")
-            call.response.headers.append(HttpHeaders.AccessControlAllowHeaders, "x-requested-with")
-            call.response.headers.append(HttpHeaders.Vary, "Origin")
+//            call.response.headers.append(HttpHeaders.AccessControlAllowOrigin, "https://lab-monitor.herokuapp.com")
+//            call.response.headers.append(HttpHeaders.AccessControlAllowHeaders, "x-requested-with")
+//            call.response.headers.append(HttpHeaders.Vary, "Origin")
             val reportInfo: ReportDTO = call.receive()
             val room = roomCollection.findOne(Room::name eq reportInfo.room)
             if (room == null) {
