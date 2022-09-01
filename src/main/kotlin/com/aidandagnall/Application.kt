@@ -30,6 +30,7 @@ fun Application.module() {
         allowMethod(HttpMethod.Options)
         allowMethod(HttpMethod.Post)
         allowMethod(HttpMethod.Get)
+        anyHost()
     }
     configureRouting()
     configureSerialization()
