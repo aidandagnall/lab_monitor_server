@@ -31,6 +31,9 @@ fun Route.reportRouting() {
                 call.respond(HttpStatusCode.BadRequest)
             }
             reportCollection.insertOne(Report(ZonedDateTime.now(ZoneId.of("Europe/London")).toInstant(), room!!._id, reportInfo.popularity, reportInfo.removalChance))
+
+            call.response.headers.append(HttpHeaders.AccessControlAllowOrigin, "https://lab-monitor.herokuapp.com")
+            call.response.headers.append(HttpHeaders.Vary, "Origin")
             call.respond(HttpStatusCode.Created)
         }
     }
