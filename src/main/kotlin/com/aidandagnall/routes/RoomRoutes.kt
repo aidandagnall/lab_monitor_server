@@ -61,7 +61,7 @@ fun Route.roomRouting() {
                     }
                 }
             }
-            call.response.headers.append(HttpHeaders.AccessControlAllowOrigin, "uon-lab-monitor.herokuapp.com")
+            call.response.headers.append(HttpHeaders.AccessControlAllowOrigin, "lab-monitor.herokuapp.com")
             call.response.headers.append(HttpHeaders.Vary, "Origin")
             call.respond(rooms)
         }
