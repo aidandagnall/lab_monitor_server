@@ -7,3 +7,4 @@ this with the client, you'll also need to set the `.env` variables in the client
 
 Some routes are protected with an API key. You can set this yourself. It allows you to use Postman or similar to more
 easily create/edit certain data, or just do it via MongoDB.
+
