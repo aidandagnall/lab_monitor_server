@@ -3,7 +3,6 @@ package com.aidandagnall.routes
 import com.aidandagnall.Constants
 import com.aidandagnall.models.Report
 import com.aidandagnall.models.ReportDTO
-import com.aidandagnall.models.ReportDTOWrapper
 import com.aidandagnall.models.Room
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -24,9 +23,6 @@ fun Route.reportRouting() {
 
         }
         post {
-//            call.response.headers.append(HttpHeaders.AccessControlAllowOrigin, "https://lab-monitor.herokuapp.com")
-//            call.response.headers.append(HttpHeaders.AccessControlAllowHeaders, "x-requested-with")
-//            call.response.headers.append(HttpHeaders.Vary, "Origin")
             val reportInfo: ReportDTO = call.receive()
             val room = roomCollection.findOne(Room::name eq reportInfo.room)
             if (room == null) {

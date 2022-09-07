@@ -10,16 +10,6 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.cors.routing.*
 
-//fun main() {
-//    jsonMapper {
-//        addModule(kotlinModule())
-//    }
-//    embeddedServer(Netty, port = System.getenv("PORT").toInt()) {
-//        configureRouting()
-//        configureSerialization()
-//    }.start(wait = true)
-//}
-
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 fun Application.module() {

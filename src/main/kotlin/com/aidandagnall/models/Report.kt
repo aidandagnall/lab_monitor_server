@@ -7,5 +7,3 @@ import java.util.*
 data class Report(val time: Instant, val room: Id<Room>, val popularity: Popularity?, val removalChance: RemovalChance?)
 
 data class ReportDTO(val room: String, val popularity: Popularity?, val removalChance: RemovalChance?)
-
-data class ReportDTOWrapper(val dto: ReportDTO)
