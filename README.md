@@ -1,6 +1,6 @@
 # Lab Monitor Server
 
-See [Lab Monitor Client](https://github.aidandagnall.com/lab_monitor_client) for more information about this project.
+See [Lab Monitor Client](https://github.com/aidandagnall/lab_monitor_client) for more information about this project.
 
 If you'd like to work on this, you'll need your own MongoDB instance, and follow the schema in `schema.json`. To test
 this with the client, you'll also need to set the `.env` variables in the client to point to your server.
