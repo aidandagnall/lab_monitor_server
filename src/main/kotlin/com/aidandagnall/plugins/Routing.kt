@@ -1,9 +1,6 @@
 package com.aidandagnall.plugins
 
-import com.aidandagnall.routes.labRouting
-import com.aidandagnall.routes.moduleRouting
-import com.aidandagnall.routes.reportRouting
-import com.aidandagnall.routes.roomRouting
+import com.aidandagnall.routes.*
 import io.ktor.server.routing.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -17,6 +14,7 @@ fun Application.configureRouting() {
         labRouting()
         reportRouting()
         moduleRouting()
+        issueRouting()
     }
     routing {
     }
