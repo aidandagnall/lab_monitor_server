@@ -1,11 +1,14 @@
 package com.aidandagnall
 
+import com.google.common.hash.Hashing
 import io.ktor.http.auth.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
+import io.ktor.util.*
 import io.ktor.utils.io.charsets.*
+import java.nio.charset.StandardCharsets
 import kotlin.text.Charsets
 
 public fun AuthenticationConfig.token(
@@ -83,3 +86,21 @@ class TokenAuthenticationProvider internal constructor(config: Config) : Authent
 }
 
 public data class TokenCredential(val token: String) : Credential
+
+public fun ApplicationRequest.tokenAuthenticationCredentials(charset: Charset? = null): TokenCredential? {
+    when (val authHeader = parseAuthorizationHeader()) {
+        is HttpAuthHeader.Single -> {
+            if (!authHeader.authScheme.equals("Bearer", ignoreCase = true)) {
+                return null
+            }
+
+            val token = authHeader.blob.removePrefix("Bearer ")
+
+            return TokenCredential(Hashing.sha256().hashString(token, StandardCharsets.UTF_8).toString())
+        }
+        else -> {
+            println(authHeader?.authScheme)
+            return null
+        }
+    }
+}
