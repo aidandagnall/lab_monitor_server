@@ -1,17 +1,12 @@
 package com.aidandagnall
 
-import com.aidandagnall.models.UserSession
+import com.aidandagnall.dao.DatabaseFactory
 import com.aidandagnall.plugins.*
-import com.google.common.hash.Hashing
+//import com.auth0.jwk.JwkProvider
+//import com.auth0.jwk.JwkProviderBuilder
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
 import io.ktor.server.plugins.cors.routing.*
-import org.litote.kmongo.KMongo
-import org.litote.kmongo.eq
-import org.litote.kmongo.findOne
-import org.litote.kmongo.getCollection
-import java.nio.charset.StandardCharsets
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -23,19 +18,13 @@ fun Application.module() {
         allowMethod(HttpMethod.Options)
         allowMethod(HttpMethod.Post)
         allowMethod(HttpMethod.Get)
+        allowHeader("authorization")
         anyHost()
+        allowCredentials = true
+        allowNonSimpleContentTypes = true
     }
-    install(Authentication) {
-        token {
-            validate {
-                val db = KMongo.createClient(Constants.CONNECTION_STRING).getDatabase("labs")
-                val sessions = db.getCollection<UserSession>("user_session")
-                val session = sessions.findOne { UserSession::tokenHash eq Hashing.sha256().hashString(it.token, StandardCharsets.UTF_8).toString() }
-                if (session != null) UserIdPrincipal(session.email)
-                else null
-            }
-        }
-    }
+    DatabaseFactory.init()
     configureRouting()
     configureSerialization()
+    configureAuthentication()
 }

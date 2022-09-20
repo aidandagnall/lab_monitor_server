@@ -10,13 +10,10 @@ fun Application.configureRouting() {
         get("/") {
             call.respondText("Hello world!")
         }
-        authRouting()
         roomRouting()
         labRouting()
         reportRouting()
         moduleRouting()
         issueRouting()
-    }
-    routing {
     }
 }

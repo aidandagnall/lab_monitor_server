@@ -1,31 +1,32 @@
 package com.aidandagnall.routes
 
-import com.aidandagnall.Constants
-import com.aidandagnall.models.Issue
+import com.aidandagnall.Permissions
+import com.aidandagnall.dao.IssueDAOImpl
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.litote.kmongo.KMongo
-import org.litote.kmongo.getCollection
 
 fun Routing.issueRouting() {
+   val dao = IssueDAOImpl()
    route("/issue") {
-      val db = KMongo.createClient(Constants.CONNECTION_STRING).getDatabase("labs")
-      val issues = db.getCollection<Issue>()
-      authenticate {
-
+      authenticate(Permissions.READ_ISSUES) {
          get {
-            if (call.request.headers["key"] == Constants.API_KEY) {
-               call.respond(issues.find().toList())
-            }
+               call.respond(dao.allIssues())
          }
+      }
+      authenticate(Permissions.CREATE_ISSUE) {
          post {
-            val issue: Issue = call.receive()
-            issues.insertOne(issue.copy())
-            call.respond(HttpStatusCode.Created)
+            call.principal<JWTPrincipal>()?.subject?.let{ email ->
+               val issue = dao.createIssue(
+                  call.receive(), email
+               )
+               call.respond(HttpStatusCode.Created, issue)
+            }
+            call.respond(HttpStatusCode.BadRequest)
          }
       }
    }
