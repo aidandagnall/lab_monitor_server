@@ -2,6 +2,7 @@ package com.aidandagnall.routes
 
 import com.aidandagnall.Permissions
 import com.aidandagnall.dao.IssueDAOImpl
+import com.aidandagnall.models.IssueDTO
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -24,7 +25,7 @@ fun Routing.issueRouting() {
                val issue = dao.createIssue(
                   call.receive(), email
                )
-               call.respond(HttpStatusCode.Created, issue)
+               call.respond(HttpStatusCode.Created, IssueDTO.fromIssue(issue))
             }
             call.respond(HttpStatusCode.BadRequest)
          }

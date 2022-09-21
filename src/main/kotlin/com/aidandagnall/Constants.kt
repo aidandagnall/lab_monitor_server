@@ -6,6 +6,11 @@ class Constants {
     companion object {
         val JWT_ISSUER: String = dotenv()["JWT_ISSUER"]
         val JWT_AUDIENCE: String = dotenv()["JWT_AUDIENCE"]
+
+        val AUTH0_CLIENT_ID: String = dotenv()["AUTH0_CLIENT_ID"]
+        val AUTH0_CLIENT_SECRET: String = dotenv()["AUTH0_CLIENT_SECRET"]
+        val AUTH0_CLIENT_URL: String = dotenv()["AUTH0_CLIENT_URL"]
+        val AUTH0_CLIENT_AUDIENCE: String = dotenv()["AUTH0_CLIENT_AUDIENCE"]
     }
 }
 
@@ -19,6 +24,9 @@ class Permissions {
         const val EDIT_ISSUE: String = "edit:issue"
         const val DELETE_ISSUE: String = "delete:issue"
         const val DELETE_REPORT: String = "delete:report"
+        const val CREATE_LAB: String = "create:lab"
+        const val EDIT_USER: String = "edit:user"
+        const val DELETE_USER: String = "delete:user"
 
         val ALL = listOf(
             READ_ROOMS,
@@ -28,13 +36,29 @@ class Permissions {
             READ_REPORTS,
             EDIT_ISSUE,
             DELETE_ISSUE,
-            DELETE_REPORT
+            DELETE_REPORT,
+            CREATE_LAB,
+            EDIT_USER,
+            DELETE_USER,
         )
 
         val USER_PERMISSIONS = listOf(
             READ_ROOMS,
             CREATE_ISSUE,
             CREATE_REPORT
+        )
+
+        val RST_PERMISSIONS = listOf(
+            READ_ISSUES,
+            DELETE_ISSUE,
+        )
+
+        val ADMIN_PERMISSIONS = listOf(
+            CREATE_LAB,
+            READ_REPORTS,
+            DELETE_REPORT,
+            EDIT_USER,
+            DELETE_USER,
         )
 
     }

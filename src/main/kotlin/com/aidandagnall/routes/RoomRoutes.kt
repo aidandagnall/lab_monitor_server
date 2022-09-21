@@ -9,6 +9,7 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 
 fun Route.roomRouting() {
@@ -18,7 +19,7 @@ fun Route.roomRouting() {
     route("/room") {
         authenticate(Permissions.READ_ROOMS) {
             get {
-                val reports = reportDAO.recentReports()
+                val reports = newSuspendedTransaction { reportDAO.recentReports().map { ReportDTO(it.room.name, it.popularity, it.removalChance, "") } }
                 val currentLabs = labDAO.getCurrentLabs()
                 val nextLabs = labDAO.getNextLabs()
                 // TODO: STOP THIS FROM MAKING SO MANY CALLS
@@ -30,7 +31,7 @@ fun Route.roomRouting() {
                         },
                         nextLabs.filter { lab -> lab.rooms.map { lab.id }.contains(it.id) }
                             .minByOrNull { lab -> lab.startTime },
-                        transaction { reports.filter { report -> report.room.id == it.id } } )
+                        reports.filter { report -> it.name == report.room},)
                 })
 
             }

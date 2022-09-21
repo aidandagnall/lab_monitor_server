@@ -18,6 +18,10 @@ fun Application.configureAuthentication() {
         .build()
 
     install(Authentication) {
+        jwt {
+            verifier(jwk, Constants.JWT_ISSUER)
+            validate { validateCredentials(it) }
+        }
         Permissions.ALL.map { permission ->
             jwt(permission) {
                 verifier(jwk, Constants.JWT_ISSUER)

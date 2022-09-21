@@ -48,6 +48,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
     implementation("mysql:mysql-connector-java:8.0.30")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
+    implementation("com.auth0:auth0:1.43.0")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }

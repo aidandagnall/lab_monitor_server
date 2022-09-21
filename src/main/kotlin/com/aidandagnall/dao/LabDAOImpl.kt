@@ -1,7 +1,6 @@
 package com.aidandagnall.dao
 
-import com.aidandagnall.models.Lab
-import com.aidandagnall.models.Labs
+import com.aidandagnall.models.*
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
@@ -38,5 +37,16 @@ class LabDAOImpl : LabDAO {
             Labs.endTime greater DateTimeFormatter.ofPattern("HHmm").format(LocalDateTime.now())
             Labs.day eq LocalDateTime.now().dayOfWeek.value
         }.toList()
+    }
+
+    override suspend fun createLab(lab: LabDTO): Lab = transaction {
+        Lab.new {
+            module = Module.find { Modules.code eq lab.moduleCode }.first()
+            day = lab.day
+            startTime = lab.startTime
+            endTime = lab.endTime
+            removalChance = lab.removalChance
+            rooms = Room.find { Rooms.name inList lab.rooms}
+        }
     }
 }

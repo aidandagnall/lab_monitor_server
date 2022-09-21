@@ -5,15 +5,28 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
+import java.util.*
 
 class ReportDAOImpl : ReportDAO {
-    override suspend fun createReport(dto: ReportDTO): Report = transaction {
-        Report.new {
-            time = LocalDateTime.now()
-            room = Room.find{ Rooms.name eq dto.room }.first()
-            popularity = dto.popularity
-            removalChance = dto.removalChance
-            email = dto.email
+    override suspend fun createReport(dto: ReportDTO): Report? {
+        val _room = transaction {
+            Room.find {
+                Rooms.name eq dto.room.replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(
+                        Locale.getDefault()
+                    ) else it.toString()
+                }
+            }.first()
+        }
+
+        return transaction {
+            Report.new {
+                time = LocalDateTime.now()
+                room = _room
+                popularity = dto.popularity
+                removalChance = dto.removalChance
+                email = dto.email
+            }
         }
     }
 

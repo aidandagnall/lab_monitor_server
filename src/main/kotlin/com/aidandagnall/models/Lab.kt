@@ -18,7 +18,7 @@ data class LabDTO(
 
 class Lab(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<Lab>(Labs)
-    var moduleId by Module referencedOn Modules.id
+    var module by Module referencedOn Modules.id
     var day by Labs.day
     var startTime by Labs.startTime
     var endTime by Labs.endTime

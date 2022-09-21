@@ -14,7 +14,7 @@ data class RoomDTO(
     var currentLab: Lab?,
     var nextLab: Lab?,
 ) {
-    constructor(room: Room, currentLab: Lab?, nextLab: Lab?, reports: List<Report>) : this(
+    constructor(room: Room, currentLab: Lab?, nextLab: Lab?, reports: List<ReportDTO>) : this(
         name = room.name,
         size = room.size,
         type = room.type,

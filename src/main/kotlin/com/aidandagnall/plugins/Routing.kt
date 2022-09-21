@@ -15,5 +15,6 @@ fun Application.configureRouting() {
         reportRouting()
         moduleRouting()
         issueRouting()
+        userRouting()
     }
 }

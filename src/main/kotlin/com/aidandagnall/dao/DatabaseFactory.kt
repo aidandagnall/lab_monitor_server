@@ -22,6 +22,7 @@ object DatabaseFactory {
             SchemaUtils.create(Reports)
             SchemaUtils.create(Users)
             SchemaUtils.create(UserPermissions)
+            SchemaUtils.create(UserPermissionsConnection)
         }
     }
     suspend fun <T> dbQuery(block: suspend () -> T): T =

@@ -23,7 +23,19 @@ data class IssueDTO(
     val subCategory: String?,
     val subSubCategory: String?,
     val description: String?,
-)
+) {
+    companion object {
+        fun fromIssue(issue: Issue): IssueDTO = IssueDTO(
+            issue.location,
+            issue.email,
+            issue.category,
+            issue.subCategory,
+            issue.subSubCategory,
+            issue.description,
+        )
+
+    }
+}
 
 enum class IssueStatus {
     NEW,

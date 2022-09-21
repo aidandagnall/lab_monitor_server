@@ -16,7 +16,7 @@ fun Route.reportRouting() {
 
             post {
                 val report = dao.createReport(call.receive())
-                call.respond(HttpStatusCode.Created, report)
+                call.respond(HttpStatusCode.Created)
             }
         }
     }
