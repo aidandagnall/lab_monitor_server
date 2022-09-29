@@ -9,4 +9,5 @@ interface ReportDAO {
     suspend fun allReports(): List<Report>
     suspend fun recentReportsForRoom(id: EntityID<Int>): List<Report>
     suspend fun recentReports(): List<Report>
+    suspend fun deleteReport(id: Int): Unit?
 }

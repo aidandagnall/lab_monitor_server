@@ -16,7 +16,7 @@ fun Routing.issueRouting() {
    route("/issue") {
       authenticate(Permissions.READ_ISSUES) {
          get {
-               call.respond(dao.allIssues())
+               call.respond(dao.allIssues().map { IssueDTO.fromIssue(it) })
          }
       }
       authenticate(Permissions.CREATE_ISSUE) {
@@ -28,6 +28,22 @@ fun Routing.issueRouting() {
                call.respond(HttpStatusCode.Created, IssueDTO.fromIssue(issue))
             }
             call.respond(HttpStatusCode.BadRequest)
+         }
+      }
+
+      authenticate(Permissions.EDIT_ISSUE) {
+         post("/{id}/complete") {
+            val id = call.parameters["id"]
+            dao.completeIssue(Integer.parseInt(id))
+            call.respond(HttpStatusCode.OK)
+         }
+      }
+
+      authenticate(Permissions.DELETE_ISSUE) {
+         delete("/{id}") {
+            val id = call.parameters["id"]
+            dao.deleteIssue(Integer.parseInt(id))
+            call.respond(HttpStatusCode.OK)
          }
       }
    }

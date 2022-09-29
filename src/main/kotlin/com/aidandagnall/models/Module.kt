@@ -6,11 +6,24 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 
 data class ModuleDTO(
+    val id: Int?,
     val code: String,
     val abbreviation: String,
     val name: String,
     val convenor: List<String>,
-)
+) {
+    companion object {
+        fun fromModule(module: Module): ModuleDTO {
+            return ModuleDTO(
+                id = module.id.value,
+                code = module.code,
+                abbreviation = module.abbreviation,
+                name = module.name,
+                convenor = module.convenor.split(",")
+            )
+        }
+    }
+}
 
 class Module(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<Module>(Modules)
@@ -21,8 +34,8 @@ class Module(id: EntityID<Int>) : IntEntity(id) {
 }
 
 object Modules : IntIdTable() {
-    val code = varchar("code", 7)
+    val code = varchar("code", 8)
     val abbreviation = varchar("abbreviation", 3)
-    val name = varchar("name", 50)
-    val convenor = varchar("convenor", 30)
+    val name = varchar("name", 200)
+    val convenor = varchar("convenor", 100)
 }

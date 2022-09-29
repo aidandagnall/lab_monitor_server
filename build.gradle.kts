@@ -49,6 +49,9 @@ dependencies {
     implementation("mysql:mysql-connector-java:8.0.30")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
     implementation("com.auth0:auth0:1.43.0")
+    implementation("com.fasterxml.jackson.module:jackson-module-parameter-names:2.13.4")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.13.4")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }

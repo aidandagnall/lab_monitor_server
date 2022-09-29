@@ -18,7 +18,6 @@ object DatabaseFactory {
             SchemaUtils.create(Rooms)
             SchemaUtils.create(Modules)
             SchemaUtils.create(Labs)
-            SchemaUtils.create(LabRooms)
             SchemaUtils.create(Reports)
             SchemaUtils.create(Users)
             SchemaUtils.create(UserPermissions)

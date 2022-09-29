@@ -11,10 +11,10 @@ data class RoomDTO(
     val type: RoomType,
     var popularity: Popularity?,
     var removalChance: RemovalChance?,
-    var currentLab: Lab?,
-    var nextLab: Lab?,
+    var currentLab: LabDTO?,
+    var nextLab: LabDTO?,
 ) {
-    constructor(room: Room, currentLab: Lab?, nextLab: Lab?, reports: List<ReportDTO>) : this(
+    constructor(room: Room, currentLab: LabDTO?, nextLab: LabDTO?, reports: List<ReportDTO>) : this(
         name = room.name,
         size = room.size,
         type = room.type,

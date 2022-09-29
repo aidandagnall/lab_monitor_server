@@ -27,6 +27,9 @@ class Permissions {
         const val CREATE_LAB: String = "create:lab"
         const val EDIT_USER: String = "edit:user"
         const val DELETE_USER: String = "delete:user"
+        const val DELETE_LAB: String = "delete:lab"
+        const val CREATE_MODULE: String = "create:module"
+        const val DELETE_MODULE: String = "delete:module"
 
         val ALL = listOf(
             READ_ROOMS,
@@ -40,6 +43,9 @@ class Permissions {
             CREATE_LAB,
             EDIT_USER,
             DELETE_USER,
+            DELETE_LAB,
+            CREATE_MODULE,
+            DELETE_MODULE
         )
 
         val USER_PERMISSIONS = listOf(
@@ -55,10 +61,13 @@ class Permissions {
 
         val ADMIN_PERMISSIONS = listOf(
             CREATE_LAB,
+            DELETE_LAB,
             READ_REPORTS,
             DELETE_REPORT,
             EDIT_USER,
             DELETE_USER,
+            CREATE_MODULE,
+            DELETE_MODULE
         )
 
     }

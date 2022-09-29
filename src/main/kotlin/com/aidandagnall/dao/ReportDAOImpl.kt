@@ -30,7 +30,7 @@ class ReportDAOImpl : ReportDAO {
         }
     }
 
-    override suspend fun allReports(): List<Report> = transaction { Report.all().toList() }
+    override suspend fun allReports(): List<Report> = transaction { Report.all().sortedByDescending { it.time }.toList() }
 
     override suspend fun recentReportsForRoom(id: EntityID<Int>): List<Report> = transaction {
         Report.find {
@@ -43,5 +43,9 @@ class ReportDAOImpl : ReportDAO {
         Report.find {
             Reports.time greater LocalDateTime.now().minusHours(1)
         }.with(Report::room).toList()
+    }
+
+    override suspend fun deleteReport(id: Int) = transaction {
+        Report.findById(id)?.delete()
     }
 }
