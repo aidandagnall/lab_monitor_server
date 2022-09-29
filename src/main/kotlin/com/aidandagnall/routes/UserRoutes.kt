@@ -1,15 +1,9 @@
 package com.aidandagnall.routes
 
-import com.aidandagnall.Constants
 import com.aidandagnall.Permissions
 import com.aidandagnall.dao.UserDAOImpl
 import com.aidandagnall.models.User
 import com.aidandagnall.models.UserDTO
-import com.auth0.client.auth.AuthAPI
-import com.auth0.client.mgmt.ManagementAPI
-import com.auth0.client.mgmt.filter.UserFilter
-import com.auth0.exception.APIException
-import com.auth0.exception.Auth0Exception
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -20,7 +14,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 
 fun Routing.userRouting() {
-    val dao = UserDAOImpl();
+    val dao = UserDAOImpl()
     route("/user") {
 
     authenticate(Permissions.EDIT_USER) {
@@ -52,9 +46,6 @@ fun Routing.userRouting() {
             val userId = call.parameters["id"]
             val permission = call.parameters["permission"]
             if (userId == null || permission == null || permission !in Permissions.ALL) {
-                println(userId)
-                println(permission)
-
                 call.respond(HttpStatusCode.BadRequest)
                 return@post
             }

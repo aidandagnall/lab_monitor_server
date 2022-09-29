@@ -13,16 +13,22 @@ import com.auth0.exception.Auth0Exception
 import org.jetbrains.exposed.sql.SizedCollection
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.NoSuchElementException
 
 class UserDAOImpl : UserDAO {
     override suspend fun getUser(_userId: String): User? = transaction {
-        val user = User.findById(_userId)
-        if (user != null) return@transaction user
+        User.findById(_userId)
 
-        User.find { Users.email eq _userId }.first()
+        val usersByEmail = User.find { Users.email eq _userId }
+        if (usersByEmail.count() > 0) usersByEmail.first()
+
+        try {
+            User.find { Users.email like "$_userId@%" }.first()
+        } catch (e: NoSuchElementException) {
+            null
+        }
     }
     override suspend fun checkUserPermission(_email: String, _permission: String): Boolean = newSuspendedTransaction{
-        println("CHECKING USER PERMS")
         val user = User.findById(_email) ?: addUser(_email, Permissions.USER_PERMISSIONS)
         ?: return@newSuspendedTransaction false
         user.permissions.map { it.permission }.contains(_permission)
@@ -66,7 +72,7 @@ class UserDAOImpl : UserDAO {
     override suspend fun removePermissionFromUser(_userId: String, _permission: String): Unit = transaction {
         val user = User.findById(_userId)
         user?.let { u ->
-            user.permissions = SizedCollection(user.permissions.filter { it.permission != _permission })
+            u.permissions = SizedCollection(user.permissions.filter { it.permission != _permission })
         }
     }
     override suspend fun addPermissionToUser(_userId: String, _permission: String): Unit = transaction {
