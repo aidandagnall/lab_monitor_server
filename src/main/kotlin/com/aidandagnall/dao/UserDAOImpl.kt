@@ -19,8 +19,7 @@ class UserDAOImpl : UserDAO {
     override suspend fun getUser(_userId: String): User? = transaction {
         User.findById(_userId)
 
-        val usersByEmail = User.find { Users.email eq _userId }
-        if (usersByEmail.count() > 0) usersByEmail.first()
+        User.find { Users.email eq _userId }.firstOrNull()
 
         try {
             User.find { Users.email like "$_userId@%" }.first()
