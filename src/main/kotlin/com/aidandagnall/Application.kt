@@ -1,11 +1,9 @@
 package com.aidandagnall
 
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
+import com.aidandagnall.dao.DatabaseFactory
 import com.aidandagnall.plugins.*
-import com.fasterxml.jackson.module.kotlin.jsonMapper
-import com.fasterxml.jackson.module.kotlin.kotlinModule
-import io.github.cdimascio.dotenv.dotenv
+//import com.auth0.jwk.JwkProvider
+//import com.auth0.jwk.JwkProviderBuilder
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.cors.routing.*
@@ -20,8 +18,13 @@ fun Application.module() {
         allowMethod(HttpMethod.Options)
         allowMethod(HttpMethod.Post)
         allowMethod(HttpMethod.Get)
+        allowHeader("authorization")
         anyHost()
+        allowCredentials = true
+        allowNonSimpleContentTypes = true
     }
+    DatabaseFactory.init()
     configureRouting()
     configureSerialization()
+    configureAuthentication()
 }
