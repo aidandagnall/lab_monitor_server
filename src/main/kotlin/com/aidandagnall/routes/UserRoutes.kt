@@ -82,6 +82,10 @@ fun Routing.userRouting() {
                 "permissions" to permissions.map { it.permission })
             )
         }
+
+        get("/permissions/all") {
+            call.respond(Permissions.USER_PERMISSIONS + Permissions.RST_PERMISSIONS + Permissions.ADMIN_PERMISSIONS)
+        }
     }
     }
 
