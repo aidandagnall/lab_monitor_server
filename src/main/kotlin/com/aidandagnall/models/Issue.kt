@@ -6,6 +6,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.javatime.datetime
 import org.jetbrains.exposed.sql.javatime.timestamp
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
 
 class Issue(id: EntityID<Int>) : IntEntity(id) {
@@ -53,18 +54,20 @@ data class IssueDTO(
     val closedBy: String?
 ) {
     companion object {
-        fun fromIssue(issue: Issue): IssueDTO = IssueDTO(
-            issue.id.value,
-            issue.location,
-            issue.email,
-            issue.category,
-            issue.subCategory,
-            issue.subSubCategory,
-            issue.description,
-            issue.status.name,
-            issue.dateSubmitted,
-            issue.closedBy?.email,
-        )
+        fun fromIssue(issue: Issue): IssueDTO = transaction {
+            IssueDTO(
+                issue.id.value,
+                issue.location,
+                issue.email,
+                issue.category,
+                issue.subCategory,
+                issue.subSubCategory,
+                issue.description,
+                issue.status.name,
+                issue.dateSubmitted,
+                issue.closedBy?.email,
+            )
+        }
 
     }
 }
