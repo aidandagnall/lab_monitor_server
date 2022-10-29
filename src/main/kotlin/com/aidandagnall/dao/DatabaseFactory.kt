@@ -12,7 +12,7 @@ object DatabaseFactory {
     fun init() {
         val driverClassName = "com.mysql.cj.jdbc.Driver"
         val jdbcURL = Dotenv.load()["DB_URL"]
-        val database = Database.connect(jdbcURL, driverClassName, user = "root")
+        val database = Database.connect(jdbcURL, driverClassName, user = Dotenv.load()["DB_USER"], password = Dotenv.load()["DB_PASSWORD"])
         transaction(database) {
             SchemaUtils.create(Issues)
             SchemaUtils.create(Rooms)
