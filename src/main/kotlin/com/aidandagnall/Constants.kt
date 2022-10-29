@@ -11,6 +11,10 @@ class Constants {
         val AUTH0_CLIENT_SECRET: String = dotenv()["AUTH0_CLIENT_SECRET"]
         val AUTH0_CLIENT_URL: String = dotenv()["AUTH0_CLIENT_URL"]
         val AUTH0_CLIENT_AUDIENCE: String = dotenv()["AUTH0_CLIENT_AUDIENCE"]
+
+        val EMAIL_URL: String = dotenv()["EMAIL_URL"]
+        val EMAIL_KEY: String = dotenv()["EMAIL_KEY"]
+        val EMAIL_SENDER: String = dotenv()["EMAIL_SENDER"]
     }
 }
 
@@ -57,6 +61,7 @@ class Permissions {
         val RST_PERMISSIONS = listOf(
             READ_ISSUES,
             DELETE_ISSUE,
+            EDIT_ISSUE,
         )
 
         val ADMIN_PERMISSIONS = listOf(

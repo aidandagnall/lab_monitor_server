@@ -52,6 +52,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-parameter-names:2.13.4")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.13.4")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.4")
+    implementation("com.mailgun:mailgun-java:1.0.4")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }

@@ -9,7 +9,26 @@ import org.jetbrains.exposed.sql.javatime.timestamp
 import java.time.LocalDateTime
 
 class Issue(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<Issue>(Issues)
+    companion object : IntEntityClass<Issue>(Issues) {
+        fun locationCodeToRoomName(code: String): String {
+            val roomCode = code.take(3)
+            if (roomCode in SPECIAL_ROOMS) {
+                return SPECIAL_ROOMS[roomCode]!!
+            }
+
+            return ('A' + roomCode[0].digitToInt()).toString() + roomCode.takeLast(2)
+        }
+
+
+        // TODO: Convert to resource file in future
+        private val SPECIAL_ROOMS = mapOf<String, String>(
+            "301" to "Pod 1 (B North)",
+            "302" to "Pod 2 (B South)",
+            "303" to "Pod 3 (C North)",
+            "304" to "Pod 4 (C South)",
+            "305" to "The Hub"
+        )
+    }
     var location by Issues.location
     var email by Issues.email
     var category by Issues.category
@@ -18,6 +37,7 @@ class Issue(id: EntityID<Int>) : IntEntity(id) {
     var description by Issues.description
     var status by Issues.status
     var dateSubmitted by Issues.dateSubmitted
+    var closedBy by User optionalReferencedOn Issues.closedBy
 }
 
 data class IssueDTO(
@@ -29,7 +49,8 @@ data class IssueDTO(
     val subSubCategory: String?,
     val description: String?,
     val status: String?,
-    val dateSubmitted: LocalDateTime?
+    val dateSubmitted: LocalDateTime?,
+    val closedBy: String?
 ) {
     companion object {
         fun fromIssue(issue: Issue): IssueDTO = IssueDTO(
@@ -42,6 +63,7 @@ data class IssueDTO(
             issue.description,
             issue.status.name,
             issue.dateSubmitted,
+            issue.closedBy?.email,
         )
 
     }
@@ -62,4 +84,5 @@ object Issues : IntIdTable() {
     val description = varchar("description", 500).nullable()
     val status = enumeration("status", IssueStatus::class)
     val dateSubmitted = datetime("date_submitted")
+    val closedBy = reference("closed_by", Users).nullable()
 }

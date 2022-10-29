@@ -1,8 +1,14 @@
 package com.aidandagnall.routes
 
+import com.aidandagnall.Constants
 import com.aidandagnall.Permissions
 import com.aidandagnall.dao.IssueDAOImpl
+import com.aidandagnall.models.Issue
 import com.aidandagnall.models.IssueDTO
+import com.fasterxml.jackson.databind.ObjectMapper
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -10,13 +16,16 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.coroutines.launch
+import org.jetbrains.exposed.sql.transactions.transaction
+import java.time.format.DateTimeFormatter
 
 fun Routing.issueRouting() {
    val dao = IssueDAOImpl()
    route("/issue") {
       authenticate(Permissions.READ_ISSUES) {
          get {
-               call.respond(dao.allIssues().map { IssueDTO.fromIssue(it) })
+               call.respond(dao.allIssues().map { transaction { IssueDTO.fromIssue(it) } })
          }
       }
       authenticate(Permissions.CREATE_ISSUE) {
@@ -33,11 +42,24 @@ fun Routing.issueRouting() {
 
       authenticate(Permissions.EDIT_ISSUE) {
          post("/{id}/complete") {
-            val id = call.parameters["id"]
-            dao.completeIssue(Integer.parseInt(id))
-            call.respond(HttpStatusCode.OK)
+            call.principal<JWTPrincipal>()?.subject?.let { userId ->
+               dao.completeIssue(Integer.parseInt(call.parameters["id"]), userId)?.let {
+                  call.respond(HttpStatusCode.OK)
+                  launch {sendIssueEmail(it) }
+               }
+            }
+         }
+
+         post("/{id}/in-progress") {
+            call.principal<JWTPrincipal>()?.subject?.let { userId ->
+               dao.markIssueInProgress(Integer.parseInt(call.parameters["id"]), userId)?.let {
+                  call.respond(HttpStatusCode.OK)
+                  launch {sendIssueEmail(it) }
+               }
+            }
          }
       }
+
 
       authenticate(Permissions.DELETE_ISSUE) {
          delete("/{id}") {
@@ -45,6 +67,35 @@ fun Routing.issueRouting() {
             dao.deleteIssue(Integer.parseInt(id))
             call.respond(HttpStatusCode.OK)
          }
+      }
+   }
+
+}
+
+suspend fun sendIssueEmail(issue: Issue) {
+   val client = HttpClient()
+   val variables = transaction {
+      mapOf<String, String>(
+         "username" to issue.email.substringBefore('@'),
+         "formattedroom" to Issue.locationCodeToRoomName(issue.location),
+         "adminusername" to (issue.closedBy?.email?.substringBefore('@') ?: ""),
+         "categorymain" to issue.category,
+         "categorysub" to (issue.subCategory ?: ""),
+         "reportdate" to issue.dateSubmitted.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+         "issueID" to "${issue.id}"
+      )
+   }
+
+   val response = client.submitForm(Constants.EMAIL_URL) {
+      basicAuth("api", Constants.EMAIL_KEY)
+      formData {
+         parameter("from", Constants.EMAIL_SENDER)
+         parameter("to", issue.email)
+         parameter("subject", "[#${issue.id}] Lab Monitor: Issue Update")
+         parameter("template", "labmonitorissueclosure")
+         parameter(
+            "h:X-Mailgun-Variables", ObjectMapper().writeValueAsString(variables)
+         )
       }
    }
 }
