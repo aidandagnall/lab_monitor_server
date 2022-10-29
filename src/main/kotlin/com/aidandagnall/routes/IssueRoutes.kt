@@ -107,7 +107,7 @@ suspend fun sendIssueEmail(issue: Issue) {
          parameter("from", Constants.EMAIL_SENDER)
          parameter("to", issue.email)
          parameter("subject", "[#${issue.id}] Lab Monitor: Issue Update")
-         parameter("template", "labmonitorissueclosure")
+         parameter("template", template)
          parameter(
             "h:X-Mailgun-Variables", ObjectMapper().writeValueAsString(variables)
          )
