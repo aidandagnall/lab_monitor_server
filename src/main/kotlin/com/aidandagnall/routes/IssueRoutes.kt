@@ -106,7 +106,7 @@ suspend fun sendIssueEmail(issue: Issue) {
       formData {
          parameter("from", Constants.EMAIL_SENDER)
          parameter("to", issue.email)
-         parameter("subject", "[#${issue.id}] Lab Monitor: Issue Update")
+         parameter("subject", "[#${issue.id}] Lab Monitor: Issue " + if(issue.status == IssueStatus.NEW) "Confirmation" else "Resolved")
          parameter("template", template)
          parameter(
             "h:X-Mailgun-Variables", ObjectMapper().writeValueAsString(variables)
