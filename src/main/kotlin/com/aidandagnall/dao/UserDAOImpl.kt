@@ -13,13 +13,19 @@ import com.auth0.exception.Auth0Exception
 import org.jetbrains.exposed.sql.SizedCollection
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.util.NoSuchElementException
+import kotlin.NoSuchElementException
 
 class UserDAOImpl : UserDAO {
     override suspend fun getUser(_userId: String): User? = transaction {
-        User.findById(_userId)
+        var user = User.findById(_userId)
+        if (user != null) {
+            return@transaction user
+        }
 
-        User.find { Users.email eq _userId }.firstOrNull()
+        user = User.find { Users.email eq _userId }.firstOrNull()
+        if (user != null) {
+            return@transaction user
+        }
 
         try {
             User.find { Users.email like "$_userId@%" }.first()
