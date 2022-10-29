@@ -68,6 +68,10 @@ fun Routing.userRouting() {
 
     }
 
+    get("/permissions/all") {
+        call.respond(Permissions.USER_PERMISSIONS + Permissions.RST_PERMISSIONS + Permissions.ADMIN_PERMISSIONS)
+    }
+
     authenticate {
         get("/permissions") {
             val permissions = transaction {
@@ -83,9 +87,6 @@ fun Routing.userRouting() {
             )
         }
 
-        get("/permissions/all") {
-            call.respond(Permissions.USER_PERMISSIONS + Permissions.RST_PERMISSIONS + Permissions.ADMIN_PERMISSIONS)
-        }
     }
     }
 
