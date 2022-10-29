@@ -15,6 +15,8 @@ class Constants {
         val EMAIL_URL: String = dotenv()["EMAIL_URL"]
         val EMAIL_KEY: String = dotenv()["EMAIL_KEY"]
         val EMAIL_SENDER: String = dotenv()["EMAIL_SENDER"]
+        val EMAIL_ISSUE_CREATED_TEMPLATE: String = dotenv()["EMAIL_ISSUE_CREATED_TEMPLATE"]
+        val EMAIL_ISSUE_COMPLETE_TEMPLATE: String = dotenv()["EMAIL_ISSUE_COMPLETE_TEMPLATE"]
     }
 }
 

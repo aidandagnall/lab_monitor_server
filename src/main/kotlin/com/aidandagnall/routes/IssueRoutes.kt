@@ -5,6 +5,7 @@ import com.aidandagnall.Permissions
 import com.aidandagnall.dao.IssueDAOImpl
 import com.aidandagnall.models.Issue
 import com.aidandagnall.models.IssueDTO
+import com.aidandagnall.models.IssueStatus
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -35,6 +36,7 @@ fun Routing.issueRouting() {
                   call.receive(), email
                )
                call.respond(HttpStatusCode.Created, IssueDTO.fromIssue(issue))
+               sendIssueEmail(issue)
             }
             call.respond(HttpStatusCode.BadRequest)
          }
@@ -54,7 +56,6 @@ fun Routing.issueRouting() {
             call.principal<JWTPrincipal>()?.subject?.let { userId ->
                dao.markIssueInProgress(Integer.parseInt(call.parameters["id"]), userId)?.let {
                   call.respond(HttpStatusCode.OK)
-                  launch {sendIssueEmail(it) }
                }
             }
          }
@@ -74,14 +75,28 @@ fun Routing.issueRouting() {
 
 suspend fun sendIssueEmail(issue: Issue) {
    val client = HttpClient()
+   val template: String = transaction {
+      return@transaction when(issue.status) {
+         IssueStatus.NEW -> Constants.EMAIL_ISSUE_CREATED_TEMPLATE
+         IssueStatus.RESOLVED -> Constants.EMAIL_ISSUE_COMPLETE_TEMPLATE
+         else -> null
+      }
+   } ?: return
+
    val variables = transaction {
       mapOf<String, String>(
          "username" to issue.email.substringBefore('@'),
          "formattedroom" to Issue.locationCodeToRoomName(issue.location),
          "adminusername" to (issue.closedBy?.email?.substringBefore('@') ?: ""),
          "categorymain" to issue.category,
+         "maincategory" to issue.category,
          "categorysub" to (issue.subCategory ?: ""),
+         "categorysubsub" to (issue.subSubCategory ?: ""),
+         "description" to (issue.description ?: ""),
          "reportdate" to issue.dateSubmitted.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+         "date" to issue.dateSubmitted.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+         "time" to issue.dateSubmitted.format(DateTimeFormatter.ofPattern("HH:mm")),
+         "locationid" to issue.location,
          "issueID" to "${issue.id}"
       )
    }
