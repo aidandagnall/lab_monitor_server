@@ -43,6 +43,13 @@ fun Routing.issueRouting() {
       }
 
       authenticate(Permissions.EDIT_ISSUE) {
+         post("/{id}/new") {
+            call.principal<JWTPrincipal>()?.subject?.let { userId ->
+               dao.markIssueAsNew(Integer.parseInt(call.parameters["id"]), userId)?.let {
+                  call.respond(HttpStatusCode.OK)
+               }
+            }
+         }
          post("/{id}/complete") {
             call.principal<JWTPrincipal>()?.subject?.let { userId ->
                dao.completeIssue(Integer.parseInt(call.parameters["id"]), userId)?.let {
