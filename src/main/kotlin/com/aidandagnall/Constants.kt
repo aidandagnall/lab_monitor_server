@@ -17,6 +17,8 @@ class Constants {
         val EMAIL_SENDER: String = dotenv()["EMAIL_SENDER"]
         val EMAIL_ISSUE_CREATED_TEMPLATE: String = dotenv()["EMAIL_ISSUE_CREATED_TEMPLATE"]
         val EMAIL_ISSUE_COMPLETE_TEMPLATE: String = dotenv()["EMAIL_ISSUE_COMPLETE_TEMPLATE"]
+
+        val TEAMS_WEBHOOK: String = dotenv()["TEAMS_WEBHOOK"]
     }
 }
 
