@@ -32,6 +32,16 @@ class IssueDAOImpl : IssueDAO {
         null
     }
 
+    override suspend fun markIssueAsNew(id: Int, closedBy: String) : Issue? = transaction {
+        Issue.findById(id)?.let {
+            it.status = IssueStatus.NEW
+            it.closedBy = User.findById(closedBy)!!
+            return@transaction it
+        }
+        null
+    }
+
+
     override suspend fun deleteIssue(id: Int): Unit = transaction {
         Issue.findById(id)?.delete()
     }

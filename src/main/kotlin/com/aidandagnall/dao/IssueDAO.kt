@@ -10,6 +10,7 @@ interface IssueDAO {
     suspend fun createIssue(dto: IssueDTO, _userId: String): Issue
 
     suspend fun completeIssue(id: Int, closedBy: String) : Issue?
+    suspend fun markIssueAsNew(id: Int, closedBy: String) : Issue?
     suspend fun deleteIssue(id: Int)
     suspend fun markIssueInProgress(id: Int, closedBy: String): Issue?
     suspend fun allIssues(): List<Issue>
