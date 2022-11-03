@@ -37,6 +37,7 @@ fun Routing.issueRouting() {
                )
                call.respond(HttpStatusCode.Created, IssueDTO.fromIssue(issue))
                sendIssueEmail(issue)
+               sendTeamsMessage(issue)
             }
             call.respond(HttpStatusCode.BadRequest)
          }
@@ -80,7 +81,7 @@ fun Routing.issueRouting() {
 
 }
 
-suspend fun sendIssueEmail(issue: Issue) {
+private suspend fun sendIssueEmail(issue: Issue) {
    val client = HttpClient()
    val template: String = transaction {
       return@transaction when(issue.status) {
@@ -119,5 +120,62 @@ suspend fun sendIssueEmail(issue: Issue) {
             "h:X-Mailgun-Variables", ObjectMapper().writeValueAsString(variables)
          )
       }
+   }
+}
+
+private suspend fun sendTeamsMessage(issue: Issue) {
+   HttpClient().post(Constants.TEAMS_WEBHOOK) {
+      setBody(getTeamsMessage(issue))
+   }
+}
+
+private fun getTeamsMessage(issue: Issue): String {
+   return transaction {
+      """{
+       "type": "AdaptiveCard",
+       "body": [
+           {
+               "type": "TextBlock",
+               "size": "Large",
+               "weight": "Bolder",
+               "text": "New Lab Monitor Issue [#${issue.id}]"]",
+               "wrap": true,
+               "style": "heading",
+               "separator": true,
+               "fontType": "Monospace"
+           },
+           {
+               "type": "FactSet",
+               "facts": [
+                   {
+                       "title": "User",
+                       "value": ${issue.email}
+                   },
+                   {
+                       "title": "Location ID",
+                       "value": ${issue.location}
+                   },
+                   {
+                       "title": "Main Category",
+                       "value": ${issue.category}
+                   },
+                   {
+                       "title": "Sub-Category",
+                       "value": ${issue.subCategory}
+                   },
+                   {
+                       "title": "Issue",
+                       "value": ${issue.subSubCategory}
+                   },
+                   {
+                       "title": "Description",
+                       "value": ${issue.description}
+                   }
+               ]
+           }
+       ],
+       "{'$'}schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+       "version": "1.4"
+      }"""
    }
 }
